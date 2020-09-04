@@ -1,0 +1,33 @@
+module network {
+    namespace urn:network;
+    prefix net;
+
+    import ietf-complex-types {
+        prefix "ct";
+    }
+
+    ct:complex-type network-device {
+        leaf management-ip {
+            type string;
+            mandatory true;
+        }
+        leaf hostname {
+            type string;
+            mandatory true;
+        }
+        list neighbors {
+            leaf device {
+                type instance-identifier {
+                    ct:instance-type network-device;
+                }
+                mandatory true;
+            }
+        }
+    }
+
+    ct:complex-type network {
+        ct:instance-list devices {
+            ct:instance-type network-device;
+        }
+    }
+}

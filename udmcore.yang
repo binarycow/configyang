@@ -1,0 +1,90 @@
+module udmcore {
+    namespace "http://example.com/udmcore";
+    prefix "udm";
+
+    import ietf-complex-types {
+        prefix "ct";
+    }
+
+    ct:complex-type PhysicalResource {
+        ct:extends Resource;
+        ct:abstract true;
+        leaf serialNumber {
+            type string;
+            description "'Manufacturer-allocated part number' as
+                         defined in SID, e.g., the part number of a fiber link
+                         cable.";
+        }
+    }
+
+    ct:complex-type Hardware {
+        ct:extends PhysicalResource;
+        ct:abstract true;
+        leaf-list physicalLink {
+            type instance-identifier {ct:instance-type PhysicalLink;}
+        }
+        ct:instance-list containedHardware {
+            ct:instance-type Hardware;
+        }
+        ct:instance-list physicalConnector {
+            ct:instance-type PhysicalConnector;
+        }
+    }
+
+    ct:complex-type PhysicalLink {
+        ct:extends PhysicalResource;
+        leaf-list hardware {
+            type instance-identifier {ct:instance-type Hardware;}
+        }
+    }
+
+    ct:complex-type ManagedHardware {
+        ct:extends Hardware;
+        ct:abstract true;
+    }
+
+    ct:complex-type PhysicalConnector {
+        ct:extends Hardware;
+        leaf location {
+            type string;
+        }
+        leaf-list sourcePhysicalConnector {
+            type instance-identifier {
+                ct:instance-type PhysicalConnector;
+            }
+        }
+        leaf-list targetPhysicalConnector {
+            type instance-identifier {
+                ct:instance-type PhysicalConnector;
+            }
+        }
+    }
+
+    ct:complex-type Equipment {
+        ct:extends ManagedHardware;
+        ct:instance-list equipment {
+            ct:instance-type Equipment;
+        }
+    }
+
+    ct:complex-type EquipmentHolder {
+        ct:extends ManagedHardware;
+        description "In the SID V8 definition, this is a class based on
+                     the M.3100 specification.  A base class that represents physical
+                     objects that are both manageable as well as able to host,
+                     hold, or contain other physical objects.  Examples of physical
+                     objects that can be represented by instances of this object
+                     class are Racks, Chassis, Cards, and Slots.
+                     A piece of equipment with the primary purpose of containing
+                     other equipment.";
+        leaf vendorName {
+            type string;
+        }
+        ct:instance-list equipment {
+            ct:instance-type Equipment;
+        }
+        ct:instance-list equipmentHolder {
+            ct:instance-type EquipmentHolder;
+        }
+    }
+}
