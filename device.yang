@@ -1,5 +1,0 @@
-module device {
-    namespace urn:cfg:device;
-    prefix dev;
-
-}
